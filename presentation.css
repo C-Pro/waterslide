@@ -221,7 +221,8 @@ input[type="text"]:focus {
     bottom: 2rem;
     right: 2rem;
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--text-secondary);
+    opacity: 0.6;
     pointer-events: none;
     letter-spacing: 0.05em;
     font-family: var(--font-heading);
