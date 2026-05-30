@@ -30,7 +30,7 @@
     // Fetch and load slide content into the DOM, handling dependencies
     async function loadSlide(index) {
         if (index < 0 || index >= slides.length) return;
-        
+
         const url = slides[index];
         try {
             const response = await fetch(url);
@@ -38,11 +38,11 @@
                 throw new Error(`Failed to fetch slide: ${url} (Status: ${response.status})`);
             }
             const htmlContent = await response.text();
-            
+
             // Parse the HTML content to extract dependencies
             const parser = new DOMParser();
             const parsedDoc = parser.parseFromString(htmlContent, 'text/html');
-            
+
             // Extract script dependency manifest links (<link rel="preload" as="script">)
             const preloads = parsedDoc.querySelectorAll('link[rel="preload"][as="script"]');
             const scriptLoads = Array.from(preloads).map(link => {
@@ -63,14 +63,36 @@
                     document.head.appendChild(script);
                 });
             });
-            
-            // Await all scripts to be fetched and executed before rendering the page content
-            await Promise.all(scriptLoads);
-            
+
+            // Extract style dependency manifest links (<link rel="preload" as="style">)
+            const stylePreloads = parsedDoc.querySelectorAll('link[rel="preload"][as="style"]');
+            const styleLoads = Array.from(stylePreloads).map(link => {
+                const href = link.getAttribute('href');
+                return new Promise((resolve) => {
+                    // Check if stylesheet is already present in document.head
+                    if (document.querySelector(`link[href="${href}"][rel="stylesheet"]`)) {
+                        resolve();
+                        return;
+                    }
+                    const styleLink = document.createElement('link');
+                    styleLink.rel = 'stylesheet';
+                    styleLink.href = href;
+                    styleLink.onload = () => resolve();
+                    styleLink.onerror = () => {
+                        console.error(`Failed to load slide style dependency: ${href}`);
+                        resolve(); // Resolve to prevent hanging
+                    };
+                    document.head.appendChild(styleLink);
+                });
+            });
+
+            // Await all scripts and styles to be fetched and executed before rendering the page content
+            await Promise.all([...scriptLoads, ...styleLoads]);
+
             // To prevent flicker, overwrite the DOM in a single synchronous operation
             // We use parsedDoc.body.innerHTML so we only inject the main slide elements
             container.innerHTML = parsedDoc.body.innerHTML;
-            
+
             currentSlideIndex = index;
             updateHash(currentSlideIndex);
 
