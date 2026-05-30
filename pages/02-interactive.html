@@ -1,0 +1,29 @@
+<link rel="preload" href="pages/02-interactive.js" as="script">
+
+<div class="slide" data-init="initCounter">
+    <div class="content-wrapper">
+        <h2>Interactive Elements Demo</h2>
+        <p>Since slide navigation is constrained strictly to Page Up and Page Down, you can fully interact with forms, buttons, inputs, and other custom controls without accidentally switching slides.</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; width: 100%;">
+            <!-- Interactive Counter Card -->
+            <div class="demo-card counter-box">
+                <h3>Live Counter Hook</h3>
+                <p style="font-size: 1rem; text-align: center;">This counter utilizes the data-init hook on slide change to reset state.</p>
+                <div class="counter-value" id="counter-val">0</div>
+                <button onclick="window.incrementCounter()">Add Count</button>
+            </div>
+            
+            <!-- Interactive Form Card -->
+            <div class="demo-card">
+                <h3>Native Input Fields</h3>
+                <p style="font-size: 1rem;">Standard text boxes remain active. Focus them and type normally.</p>
+                <form onsubmit="window.handleFormSubmit(event)">
+                    <input type="text" id="name-input" placeholder="Type your name..." required>
+                    <button type="submit">Submit Details</button>
+                </form>
+                <div id="form-feedback" class="form-feedback"></div>
+            </div>
+        </div>
+    </div>
+</div>
