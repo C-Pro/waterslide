@@ -1,11 +1,21 @@
 // Presentation Framework Configuration & Engine
-(function() {
-    // List of page URLs representing each slide in the presentation
-    const slides = [
-        'pages/01-intro.html',
-        'pages/02-interactive.html',
-        'pages/03-conclusion.html'
-    ];
+(async function() {
+    // Dynamically load presentation settings from pages/index.js
+    let slides = [];
+    let presentationTitle = '';
+
+    try {
+        const config = await import('./pages/index.js');
+        slides = config.slides || [];
+        presentationTitle = config.presentationTitle || '';
+    } catch (error) {
+        console.error('Failed to load presentation configuration from pages/index.js:', error);
+    }
+
+    // Dynamically update page title
+    if (presentationTitle) {
+        document.title = presentationTitle;
+    }
 
     let currentSlideIndex = 0;
     const container = document.getElementById('presentation-container');
