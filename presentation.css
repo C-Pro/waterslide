@@ -367,3 +367,13 @@ input[type="text"]:focus {
         gap: 1.2rem;
     }
 }
+
+/* Print optimizations */
+@media print {
+    h1 {
+        background: none !important;
+        -webkit-background-clip: initial !important;
+        -webkit-text-fill-color: initial !important;
+        color: var(--text-primary) !important;
+    }
+}
